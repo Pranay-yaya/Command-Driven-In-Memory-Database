@@ -5,4 +5,5 @@ public class Command {
     public Integer key;
     public String rawValue;
     public Long ttl;
+
 }

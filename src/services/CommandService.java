@@ -1,12 +1,9 @@
 package services;
 
-
 import entity.Command;
 import entity.CommandType;
 import exception.InvalidCommandException;
-
 import static entity.CommandType.PUT;
-
 public class CommandService {
 
     Command parse(String command) {
@@ -16,20 +13,17 @@ public class CommandService {
         Command cmd = new Command() ;
         cmd.type = type ;
 
-
         switch (type) {
             case PUT:  parsePut(arr , cmd);
                 break;
             case GET , DELETE : parseKey(arr , cmd);
                 break;
+            case STOP,START,EXIT:
+                break;
             default:
                 throw new InvalidCommandException("Unknown command type");
-
-
         }
-
         return cmd  ;
-
     }
 
     void parseKey(String  [] arr , Command command) {
@@ -41,8 +35,6 @@ public class CommandService {
         catch (NumberFormatException e){
             throw new InvalidCommandException("key value has to be numeric");
         }
-
-
     }
 
     void parsePut(String[] arr , Command command) {
@@ -58,7 +50,6 @@ public class CommandService {
         catch (Exception e){
             throw new InvalidCommandException("PUT command is invalid ");
         }
-
     }
 
     void parseTtl(String[] arr , Command command) {
