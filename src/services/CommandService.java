@@ -6,7 +6,7 @@ import exception.InvalidCommandException;
 import static entity.CommandType.PUT;
 public class CommandService {
 
-    Command parse(String command) {
+    public Command parse(String command) {
 
         String[] arr = command.split(" ");
         CommandType type = CommandType.valueOf(arr[0].toUpperCase());
@@ -41,8 +41,7 @@ public class CommandService {
 
         try {
             parseKey(arr , command);
-            String value = arr[2];
-            command.rawValue = value;
+            command.rawValue = arr[2];
             if (arr.length == 4) {
                 parseTtl(arr , command);
             }
@@ -54,8 +53,7 @@ public class CommandService {
 
     void parseTtl(String[] arr , Command command) {
         try {
-            long ttl = Long.parseLong(arr[3]);
-            command.ttl = ttl;
+            command.ttl = Long.parseLong(arr[3]);
         }
         catch (Exception e){
             throw new InvalidCommandException("TTL must be numeric");
