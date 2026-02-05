@@ -17,7 +17,13 @@ public class DatabaseService<T> implements IDatabaseService<T> {
         state=true;
         backGroundTask();
     }
+    public void start() {
+        boolean running = true;
+    }
 
+    public void stop() {
+        boolean running = false;
+    }
 
 
     private void cleanUp() {
@@ -83,11 +89,5 @@ public class DatabaseService<T> implements IDatabaseService<T> {
         }
     }
 
-    public void start() {
-        boolean running = true;
-    }
 
-    public void stop() {
-        boolean running = false;
-    }
 }
