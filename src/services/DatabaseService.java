@@ -18,17 +18,18 @@ public class DatabaseService<T> implements IDatabaseService<T> {
         backGroundTask();
     }
     public void start() {
-        boolean running = true;
+        state = true;
     }
 
     public void stop() {
-        boolean running = false;
+        state = false;
     }
 
 
     private void cleanUp() {
         data.entrySet().removeIf(entry -> entry.getValue().isExpired());
     }
+
     private void backGroundTask() {
         System.out.println("Background clear started");
 
@@ -61,6 +62,9 @@ public class DatabaseService<T> implements IDatabaseService<T> {
     }
     @Override
     public void put(Integer key, Object value, long ttl) {
+        if(!state) {
+            throw new DatabaseStoppedException("Unable to connect to Db");
+        }
         if (ttl <= 0) {
             throw new IllegalArgumentException("TTL must be > 0");
         }
@@ -69,7 +73,8 @@ public class DatabaseService<T> implements IDatabaseService<T> {
     }
     // PHASE 4: Lazy expiration on GET
     @Override
-     public T get(Integer key) {
+     public T get(Integer key) {if(!state){
+        throw new DatabaseStoppedException("Unable to connect to Db") ;}
         Entry<T> entry = data.get(key);
         if (entry == null) {
             throw new KeyNotFoundException("Key not found");
@@ -83,6 +88,9 @@ public class DatabaseService<T> implements IDatabaseService<T> {
     }
     @Override
     public void delete(Integer key) {
+                if(!state){
+                    throw new DatabaseStoppedException("Unable to connect to Db") ;
+            }
         Entry<T> removed = data.remove(key);
         if (removed == null) {
             throw new KeyNotFoundException("Key not found");

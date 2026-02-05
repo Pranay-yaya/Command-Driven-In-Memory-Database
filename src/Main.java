@@ -12,8 +12,9 @@ public class Main {
 
     public static void main(String[] args) {
 
-        // Our in-memory DB (Phase 2–4)
-        IDatabaseService<String> db = new DatabaseService<>();
+        // Our in-memory DB
+        DatabaseService<String> dbImpl = new DatabaseService<>();
+        IDatabaseService<String> db = dbImpl; // use interface where possible
 
         // Command parser (Phase 1)
         CommandService commandService = new CommandService();
@@ -21,10 +22,13 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         System.out.println("In-Memory DB (data-driven).");
         System.out.println("Use:");
-        System.out.println("  PUT <key> <value>");
-        System.out.println("  PUT <key> <value> <ttlMillis>");
-        System.out.println("  GET <key>");
-        System.out.println("  DELETE <key>");
+        System.out.println("  Command  ");
+        System.out.println("  PUT  key  Value");
+        System.out.println("  PUT  key  Value ttl");
+        System.out.println("  GET  key");
+        System.out.println("  DELETE  key ");
+        System.out.println("  START");
+        System.out.println("  STOP");
         System.out.println("  EXIT");
 
         while (true) {
@@ -52,11 +56,11 @@ public class Main {
                 switch (cmd.type) {
                     case PUT:
                         if (cmd.ttl != null) {
-                            // Phase 3: PUT with TTL
+                            // PUT with TTL
                             db.put(cmd.key, cmd.rawValue, cmd.ttl);
                             System.out.println("OK (PUT key=" + cmd.key + ", value=" + cmd.rawValue + ", ttl=" + cmd.ttl + ")");
                         } else {
-                            // Phase 2: PUT without TTL
+                            // PUT without TTL
                             db.put(cmd.key, cmd.rawValue);
                             System.out.println("OK (PUT key=" + cmd.key + ", value=" + cmd.rawValue + ")");
                         }
@@ -64,7 +68,6 @@ public class Main {
 
                     case GET:
                         try {
-                            // Phase 4: lazy expiration happens inside db.get()
                             String value = db.get(cmd.key);
                             System.out.println("VALUE: " + value);
                         } catch (KeyNotFoundException e) {
@@ -80,13 +83,14 @@ public class Main {
                             System.out.println("NOT FOUND: " + e.getMessage());
                         }
                         break;
+
                     case START:
-                        ((DatabaseService<String>) db).start();
+                        dbImpl.start();
                         System.out.println("DB STARTED");
                         break;
 
                     case STOP:
-                        ((DatabaseService<String>) db).stop();
+                        dbImpl.stop();
                         System.out.println("DB STOPPED");
                         break;
 
@@ -98,7 +102,6 @@ public class Main {
                 System.out.println("ERROR: " + e.getMessage());
             }
         }
-
         scanner.close();
     }
 }
